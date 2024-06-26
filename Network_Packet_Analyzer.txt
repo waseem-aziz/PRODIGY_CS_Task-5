@@ -1,0 +1,28 @@
+
+
+from scapy.all import sniff, IP, TCP, UDP
+
+def packet_callback(packet):
+    if IP in packet:
+        ip_src = packet[IP].src
+        ip_dst = packet[IP].dst
+        protocol = packet[IP].proto
+
+        if protocol == 6:
+            protocol_name = 'TCP'
+            payload = bytes(packet[TCP].payload)
+        elif protocol == 17:
+            protocol_name = 'UDP'
+            payload = bytes(packet[UDP].payload)
+        else:
+            protocol_name = 'Other'
+            payload = b''
+
+        print(f"IP Src: {ip_src} -> IP Dst: {ip_dst} | Protocol: {protocol_name} | Payload: {payload}")
+
+def main():
+    print("Starting packet sniffer...")
+    sniff(filter="ip", prn=packet_callback, store=0)
+
+if __name__ == "__main__":
+    main()
